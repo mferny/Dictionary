@@ -19,28 +19,28 @@ public:
 };
 
 template<class TKey>
-class Exception : public NotFoundException<TKey>
+class NotFoundExceptionImpl : public NotFoundException<TKey>
 {
 private:
     TKey key_;
 public:
-    explicit Exception(const TKey &key) : key_(key) {}
+    explicit NotFoundExceptionImpl(const TKey &key) : key_(key) {}
     virtual const TKey& GetKey() const noexcept override {
         return key_;
     }
 };
 
 template<class TKey, class TValue>
-class derivedDictionary : public Dictionary<TKey, TValue>
+class DerivedDictionary : public Dictionary<TKey, TValue>
 {
 private:
     std::unordered_map<TKey, TValue> dict;
 public:
-    virtual ~derivedDictionary() = default;
+    virtual ~DerivedDictionary() = default;
 
     virtual const TValue& Get(const TKey& key) const {
         if (dict.count(key) == 0) {
-            throw Exception<TKey>{key};
+            throw NotFoundExceptionImpl<TKey>{key};
         }
         return dict.at(key);
     }
