@@ -24,30 +24,30 @@ class NotFoundExceptionImpl : public NotFoundException<TKey>
 private:
     TKey key_;
 public:
-    explicit NotFoundExceptionImpl(const TKey &key) : key_(key) {}
-    virtual const TKey& GetKey() const noexcept override {
+    explicit NotFoundExceptionImpl(const TKey& key) : key_(key) {}
+    const TKey& GetKey() const noexcept override {
         return key_;
     }
 };
 
 template<class TKey, class TValue>
-class DerivedDictionary : public Dictionary<TKey, TValue>
+class DictionaryImpl : public Dictionary<TKey, TValue>
 {
 private:
     std::unordered_map<TKey, TValue> dict;
 public:
-    virtual ~DerivedDictionary() = default;
+    ~DictionaryImpl() = default;
 
-    virtual const TValue& Get(const TKey& key) const {
+    const TValue& Get(const TKey& key) const {
         if (dict.count(key) == 0) {
             throw NotFoundExceptionImpl<TKey>{key};
         }
         return dict.at(key);
     }
-    virtual void Set(const TKey& key, const TValue& value) {
+    void Set(const TKey& key, const TValue& value) {
         dict[key] = value;
     }
-    virtual bool IsSet(const TKey& key) const {
+    bool IsSet(const TKey& key) const {
         return dict.count(key) != 0;
     }
 };
